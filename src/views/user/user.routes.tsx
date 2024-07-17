@@ -1,11 +1,10 @@
 import { lazy } from 'react'
-import authRoute from './authRoute'
+
 import type { Routes } from '@/@types/routes'
-import { userRoutes } from '@/views/user/user.routes'
 
-export const publicRoutes: Routes = [...authRoute]
 
-export const protectedRoutes = [
+
+export const userRoutes = [
     {
         key: 'home',
         path: '/home',
@@ -55,5 +54,5 @@ export const protectedRoutes = [
         ),
         authority: [],
     },
-...userRoutes,
+    
 ]

@@ -12,7 +12,9 @@ import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage';
 import ApiService from '../../../services/ApiService';
 import type { AxiosRequestConfig } from 'axios';
 import type { CommonProps } from '@/@types/common';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import useAuth from '@/utils/hooks/useAuth'
+
 
 interface SignInFormProps extends CommonProps {
   disableSubmit?: boolean;
@@ -41,40 +43,49 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
   } = props;
 
   const [message, setMessage] = useTimeOutMessage();
-  const history = useHistory(); // Get the history object from React Router
+const navigate = useNavigate();
+const { signIn } = useAuth();
 
-  const handleSignIn = async (
-    values: SignInFormSchema,
-    setSubmitting: (isSubmitting: boolean) => void
-  ) => {
-    const { email, password } = values;
-    setSubmitting(true);
+const handleSignIn = async (
+  values: SignInFormSchema,
+  setSubmitting: (isSubmitting: boolean) => void
+) => {
+  const { email, password } = values;
+  setSubmitting(true);
 
-    const requestConfig: AxiosRequestConfig = {
-      method: 'POST',
-      url: '/login', // Relative URL, baseURL is set in ApiService
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: { email, password },
-    };
+  const requestConfig: AxiosRequestConfig = {
+    method: 'POST',
+    url: '/login', 
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: { email, password },
+  };
 
-    try {
-      const response = await ApiService.fetchData(requestConfig);
-      console.log('Response:', response.data);
-    
+  try {
+    const response = await ApiService.fetchData(requestConfig);
+    console.log('Response:', response.data);
+
+    // Use the response data with signIn method from useAuth
+    const authResult = await signIn({ email, password });
+
+    if (authResult?.status === 'failed') {
+      setMessage(authResult.message);
+    } else {
       setMessage('Login successful');
       
       // Navigate to admin dashboard after successful login
-      history.push('/admin'); 
-    } catch (error) {
-      console.error('Error:', error);
-      // Handle error here (e.g., show error message)
-      setMessage('Login failed. Please check your credentials.');
+      navigate('/home');
     }
+  } catch (error) {
+    console.error('Error:', error);
+    // Handle error here (e.g., show error message)
+    setMessage('Login failed. Please check your credentials.');
+  }
 
-    setSubmitting(false);
-  };
+  setSubmitting(false);
+};
+
 
   return (
     <div className={className}>
