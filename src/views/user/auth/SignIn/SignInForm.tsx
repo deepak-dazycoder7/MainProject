@@ -9,7 +9,7 @@ import Alert from '@/components/ui/Alert';
 import PasswordInput from '@/components/shared/PasswordInput';
 import ActionLink from '@/components/shared/ActionLink';
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage';
-import ApiService from '../../../services/ApiService';
+import ApiService from '../../../../services/ApiService';
 import type { AxiosRequestConfig } from 'axios';
 import type { CommonProps } from '@/@types/common';
 import { useNavigate } from 'react-router-dom';
@@ -75,7 +75,7 @@ const handleSignIn = async (
       setMessage('Login successful');
       
       // Navigate to admin dashboard after successful login
-      //navigate('/home');
+      navigate('/profile');
     }
   } catch (error) {
     console.error('Error:', error);

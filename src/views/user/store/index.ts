@@ -1,6 +1,6 @@
 import store from './storeSetup'
 
-export * from './storeSetupstoreSetup'
+export * from './storeSetup'
 export * from './slices/auth'
 export * from './slices/base'
 export * from './slices/theme/themeSlice'

@@ -1,11 +1,11 @@
 import { lazy } from 'react'
 import type { Routes } from '@/@types/routes'
-import { userAuthRoute } from '@/views/user/userAuthRoute'
-const authRoute: Routes = [
+
+export const userAuthRoute: Routes = [
     {
         key: 'signIn',
-        path: `/sign-in`,
-        component: lazy(() => import('@/views/auth/SignIn')),
+        path: `user/profile/login`,
+        component: lazy(() => import('@/views/user/auth/SignIn/SignIn')),
         authority: [],
     },
     {
@@ -26,7 +26,6 @@ const authRoute: Routes = [
         component: lazy(() => import('@/views/auth/ResetPassword')),
         authority: [],
     },
-    ...userAuthRoute,
 ]
 
-export default authRoute
+export default userAuthRoute
