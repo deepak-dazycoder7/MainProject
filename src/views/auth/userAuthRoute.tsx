@@ -4,8 +4,8 @@ import type { Routes } from '@/@types/routes'
 export const userAuthRoute: Routes = [
     {
         key: 'signIn',
-        path: `user/profile/login`,
-        component: lazy(() => import('@/views/user/auth/SignIn/SignIn')),
+        path: `/sign-in`,
+        component: lazy(() => import('@/views/auth/SignIn')),
         authority: [],
     },
     {

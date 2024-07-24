@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import BaseService from './BaseService'
+import userBaseService from './BaseService'
 import type { BaseQueryFn } from '@reduxjs/toolkit/query'
 import type { AxiosRequestConfig, AxiosError } from 'axios'
 
@@ -16,7 +16,7 @@ const axiosBaseQuery =
     > =>
     async (request) => {
         try {
-            const response = BaseService(request)
+            const response = userBaseService(request)
             return response
         } catch (axiosError) {
             const err = axiosError as AxiosError

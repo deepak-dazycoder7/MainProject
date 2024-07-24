@@ -1,4 +1,4 @@
-import ApiService from './ApiService'
+import ApiService from '../../services/ApiService'
 import type {
     SignInCredential,
     SignUpCredential,
@@ -10,7 +10,7 @@ import type {
 
 export async function apiSignIn(data: SignInCredential) {
     return ApiService.fetchData<SignInResponse>({
-        url: '/login',
+        url: '/sign-in',
         method: 'post',
         data,
     })

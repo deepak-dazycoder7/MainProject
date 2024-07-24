@@ -7,12 +7,12 @@ import store, { signOutSuccess } from '../store'
 
 const unauthorizedCode = [401]
 
-const BaseService = axios.create({
+const userBaseService = axios.create({
     timeout: 60000,
     baseURL: appConfig.apiPrefix,
 })
 
-BaseService.interceptors.request.use(
+userBaseService.interceptors.request.use(
     (config) => {
         const rawPersistData = localStorage.getItem(PERSIST_STORE_NAME)
         const persistData = deepParseJson(rawPersistData)
@@ -38,7 +38,7 @@ BaseService.interceptors.request.use(
     }
 )
 
-BaseService.interceptors.response.use(
+userBaseService.interceptors.response.use(
     (response) => response,
     (error) => {
         const { response } = error
@@ -51,4 +51,4 @@ BaseService.interceptors.response.use(
     }
 )
 
-export default BaseService
+export default userBaseService

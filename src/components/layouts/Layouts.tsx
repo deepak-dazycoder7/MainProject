@@ -67,6 +67,8 @@ import {
 } from '@/constants/theme.constant'
 import useDirection from '@/utils/hooks/useDirection'
 import useLocale from '@/utils/hooks/useLocale'
+import { publicRoutes } from '@/configs/routes.config'
+import { Link, useLocation } from 'react-router-dom';
 
 // Define the layout mappings
 const layouts = {
@@ -80,14 +82,19 @@ const layouts = {
 
 const Layout = () => {
     const layoutType = useAppSelector((state) => state.theme.layout.type)
-
+    const location = useLocation();
+    const currentPath = location.pathname;
     // Use custom hooks
     useDirection()
     useLocale()
-
+    console.log(currentPath)
     // Memoize the layout based on `layoutType`
     const AppLayout = useMemo(() => {
-        return layouts[layoutType] || layouts[LAYOUT_TYPE_CLASSIC] // Fallback to default layout if `layoutType` is invalid
+        if (publicRoutes.find(route => route.path === currentPath)) { 
+            return lazy(() => import('./AuthLayout'))
+        } else {
+                return layouts[layoutType] || layouts[LAYOUT_TYPE_STACKED_SIDE] // Fallback to default layout if `layoutType` is invalid
+        }
     }, [layoutType])
 
     return (
