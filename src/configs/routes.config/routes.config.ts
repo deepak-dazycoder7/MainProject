@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 import authRoute from './authRoute'
 import type { Routes } from '@/@types/routes'
-import { userProtectRoutes } from '@/views/user/user.Routes'
+import { userProtectRoutes } from '@/views/user/user.routes'
 
 export const publicRoutes: Routes = [...authRoute]
 

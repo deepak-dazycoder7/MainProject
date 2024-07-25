@@ -1,4 +1,4 @@
-import { apiSignIn, apiSignOut, apiSignUp } from '@/views/auth/userAuthService'
+import { apiSignIn, apiSignOut, apiSignUp } from '@/views/auth/auth.service'
 import {
     setUser,
     signInSuccess,
@@ -10,7 +10,7 @@ import appConfig from '@/configs/app.config'
 import { REDIRECT_URL_KEY } from '@/constants/app.constant'
 import { useNavigate } from 'react-router-dom'
 import useQuery from './useQuery'
-import type { SignInCredential, SignUpCredential } from '@/@types/auth'
+import type { SignInCredential, SignUpCredential } from '@/views/auth/auth.type'
 
 
 type Status = 'success' | 'failed'
@@ -22,7 +22,7 @@ function useAuth() {
 
     const query = useQuery()
 
-    const { token, signedIn } = useAppSelector((state) => state.auth.session)
+    const { token, signedIn } = useAppSelector((state) => state.auth.auth)//replace scnd auth to session
 
     const signIn = async (
         values: SignInCredential

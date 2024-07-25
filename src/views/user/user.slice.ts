@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { SLICE_BASE_NAME } from './constants'
+import { SLICE_BASE_NAME } from '../auth/authSlice/constants'
 
 export type UserState = {
     avatar?: string

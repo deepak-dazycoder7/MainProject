@@ -6,7 +6,7 @@ import type {
     ResetPassword,
     SignInResponse,
     SignUpResponse,
-} from '@/@types/auth'
+} from '@/views/auth/auth.type'
 
 export async function apiSignIn(data: SignInCredential) {
     return ApiService.fetchData<SignInResponse>({

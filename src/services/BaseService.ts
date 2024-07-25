@@ -7,22 +7,22 @@ import store, { signOutSuccess } from '../store'
 
 const unauthorizedCode = [401]
 
-const userBaseService = axios.create({
+const BaseService = axios.create({
     timeout: 60000,
     baseURL: appConfig.apiPrefix,
 })
 
-userBaseService.interceptors.request.use(
+BaseService.interceptors.request.use(
     (config) => {
         const rawPersistData = localStorage.getItem(PERSIST_STORE_NAME)
         const persistData = deepParseJson(rawPersistData)
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let accessToken = (persistData as any).auth.session.token
+        let accessToken = (persistData as any).auth.auth.token //replace session with scnd auth
 
         if (!accessToken) {
             const { auth } = store.getState()
-            accessToken = auth.session.token
+            accessToken = auth.auth.token //replace session with scnd auth
         }
 
         if (accessToken) {
@@ -38,7 +38,7 @@ userBaseService.interceptors.request.use(
     }
 )
 
-userBaseService.interceptors.response.use(
+BaseService.interceptors.response.use(
     (response) => response,
     (error) => {
         const { response } = error
@@ -51,4 +51,4 @@ userBaseService.interceptors.response.use(
     }
 )
 
-export default userBaseService
+export default BaseService

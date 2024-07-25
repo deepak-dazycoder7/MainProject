@@ -1,17 +1,16 @@
-import { combineReducers, CombinedState, AnyAction, Reducer } from 'redux'
-import auth, { AuthState } from './slices/auth'
-import base, { BaseState } from './slices/base'
-import locale, { LocaleState } from './slices/locale/localeSlice'
-import theme, { ThemeState } from './slices/theme/themeSlice'
+import { combineReducers, AnyAction, Reducer, CombinedState } from '@reduxjs/toolkit'
+import authReducer from '../views/auth/auth.slice'
+import baseReducer, { BaseState } from './slices/base'
+import localeReducer, { LocaleState } from './slices/locale/localeSlice'
+import themeReducer, { ThemeState } from './slices/theme/themeSlice'
 import RtkQueryService from '@/services/RtkQueryService'
 
 export type RootState = CombinedState<{
-    auth: CombinedState<AuthState>
-    base: CombinedState<BaseState>
+    auth: ReturnType<typeof authReducer>
+    base: BaseState
     locale: LocaleState
     theme: ThemeState
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    [RtkQueryService.reducerPath]: any
+    [RtkQueryService.reducerPath]: ReturnType<typeof RtkQueryService.reducer>
 }>
 
 export interface AsyncReducers {
@@ -19,21 +18,25 @@ export interface AsyncReducers {
 }
 
 const staticReducers = {
-    auth,
-    base,
-    locale,
-    theme,
+    auth: authReducer,
+    base: baseReducer,
+    locale: localeReducer,
+    theme: themeReducer,
     [RtkQueryService.reducerPath]: RtkQueryService.reducer,
 }
 
-const rootReducer =
-    (asyncReducers?: AsyncReducers) =>
-    (state: RootState, action: AnyAction) => {
-        const combinedReducer = combineReducers({
-            ...staticReducers,
-            ...asyncReducers,
-        })
+const createRootReducer = (asyncReducers?: AsyncReducers): Reducer<RootState, AnyAction> => {
+    return combineReducers({
+        ...staticReducers,
+        ...asyncReducers,
+    })
+}
+
+const rootReducer = (asyncReducers?: AsyncReducers): Reducer<RootState, AnyAction> => {
+    const combinedReducer = createRootReducer(asyncReducers)
+    return (state: RootState | undefined, action: AnyAction) => {
         return combinedReducer(state, action)
     }
+}
 
 export default rootReducer

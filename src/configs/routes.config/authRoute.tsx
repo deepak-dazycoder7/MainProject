@@ -1,6 +1,6 @@
 import { lazy } from 'react'
 import type { Routes } from '@/@types/routes'
-import { userAuthRoute } from '@/views/auth/userAuthRoute'
+import { userAuthRoute } from '@/views/auth/auth.route'
 const authRoute: Routes = [
     // {
     //     key: 'signIn',
