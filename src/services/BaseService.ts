@@ -16,20 +16,20 @@ BaseService.interceptors.request.use(
     (config) => {
         const rawPersistData = localStorage.getItem(PERSIST_STORE_NAME)
         const persistData = deepParseJson(rawPersistData)
-
+        
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let accessToken = (persistData as any).auth.auth.token //replace session with scnd auth
+        // let accessToken = (persistData as any).auth.token //replace session with scnd auth
 
-        if (!accessToken) {
-            const { auth } = store.getState()
-            accessToken = auth.auth.token //replace session with scnd auth
-        }
+        // if (!accessToken) {
+        //     const { auth } = store.getState()
+        //     //accessToken = auth.session.token. //replace session with scnd auth
+        // }
 
-        if (accessToken) {
-            config.headers[
-                REQUEST_HEADER_AUTH_KEY
-            ] = `${TOKEN_TYPE}${accessToken}`
-        }
+        // if (accessToken) {
+        //     config.headers[
+        //         REQUEST_HEADER_AUTH_KEY
+        //     ] = `${TOKEN_TYPE}${accessToken}`
+        // }
 
         return config
     },

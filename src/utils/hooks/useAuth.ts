@@ -1,43 +1,34 @@
-import { apiSignIn, apiSignOut, apiSignUp } from '@/views/auth/auth.service'
-import {
-    setUser,
-    signInSuccess,
-    signOutSuccess,
-    useAppSelector,
-    useAppDispatch,
-} from '@/store'
-import appConfig from '@/configs/app.config'
-import { REDIRECT_URL_KEY } from '@/constants/app.constant'
-import { useNavigate } from 'react-router-dom'
-import useQuery from './useQuery'
-import type { SignInCredential, SignUpCredential } from '@/views/auth/auth.type'
+import { apiSignIn, apiSignOut, apiSignUp } from '../../views/auth/auth.service';
+import {  signInSuccess, signOutSuccess, useAppSelector, useAppDispatch } from '../../store';
+import { setUser } from '@/views/user/user.slice';
+import { useNavigate } from 'react-router-dom';
+import useQuery from './useQuery';
+import { SignInCredential, SignUpCredential } from '../../views/auth/auth.type';
 
-
-type Status = 'success' | 'failed'
+type Status = 'success' | 'failed';
 
 function useAuth() {
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const query = useQuery();
 
-    const navigate = useNavigate()
-
-    const query = useQuery()
-
-    const { token, signedIn } = useAppSelector((state) => state.auth.auth)//replace scnd auth to session
+    const signedIn = useAppSelector((state) => state.auth.signedIn);
+    const token = useAppSelector((state) => state.auth.token);
 
     const signIn = async (
         values: SignInCredential
     ): Promise<
         | {
-              status: Status
-              message: string
+              status: Status;
+              message: string;
           }
         | undefined
     > => {
         try {
-            const resp = await apiSignIn(values)
+            const resp = await apiSignIn(values);
             if (resp.data) {
-                const { token } = resp.data
-                dispatch(signInSuccess(token))
+                const { token } = resp.data;
+                dispatch(signInSuccess(token));
                 if (resp.data.user) {
                     dispatch(
                         setUser(
@@ -48,32 +39,31 @@ function useAuth() {
                                 email: '',
                             }
                         )
-                    )
+                    );
                 }
-                const redirectUrl = query.get(REDIRECT_URL_KEY)
+                const redirectUrl = query.get('redirectUrl');
                 navigate(
-                    redirectUrl ? redirectUrl : appConfig.authenticatedEntryPath
-                )
+                    redirectUrl ? redirectUrl : '/authenticated-entry'
+                );
                 return {
                     status: 'success',
                     message: '',
-                }
+                };
             }
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (errors: any) {
             return {
                 status: 'failed',
                 message: errors?.response?.data?.message || errors.toString(),
-            }
+            };
         }
-    }
+    };
 
     const signUp = async (values: SignUpCredential) => {
         try {
-            const resp = await apiSignUp(values)
+            const resp = await apiSignUp(values);
             if (resp.data) {
-                const { token } = resp.data
-                dispatch(signInSuccess(token))
+                const { token } = resp.data;
+                dispatch(signInSuccess(token));
                 if (resp.data.user) {
                     dispatch(
                         setUser(
@@ -84,28 +74,27 @@ function useAuth() {
                                 email: '',
                             }
                         )
-                    )
+                    );
                 }
-                const redirectUrl = query.get(REDIRECT_URL_KEY)
+                const redirectUrl = query.get('redirectUrl');
                 navigate(
-                    redirectUrl ? redirectUrl : appConfig.authenticatedEntryPath
-                )
+                    redirectUrl ? redirectUrl : '/authenticated-entry'
+                );
                 return {
                     status: 'success',
                     message: '',
-                }
+                };
             }
-            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (errors: any) {
             return {
                 status: 'failed',
                 message: errors?.response?.data?.message || errors.toString(),
-            }
+            };
         }
-    }
+    };
 
     const handleSignOut = () => {
-        dispatch(signOutSuccess())
+        dispatch(signOutSuccess());
         dispatch(
             setUser({
                 avatar: '',
@@ -113,21 +102,21 @@ function useAuth() {
                 email: '',
                 authority: [],
             })
-        )
-        navigate(appConfig.unAuthenticatedEntryPath)
-    }
+        );
+        navigate('/unauthenticated-entry');
+    };
 
     const signOut = async () => {
-        await apiSignOut()
-        handleSignOut()
-    }
+        await apiSignOut();
+        handleSignOut();
+    };
 
     return {
-        authenticated: token && signedIn,
+        authenticated: !!token && signedIn,
         signIn,
         signUp,
         signOut,
-    }
+    };
 }
 
-export default useAuth
+export default useAuth;

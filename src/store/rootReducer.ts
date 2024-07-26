@@ -1,5 +1,6 @@
 import { combineReducers, AnyAction, Reducer, CombinedState } from '@reduxjs/toolkit'
 import authReducer from '../views/auth/auth.slice'
+import userReducer from '../views/user/user.slice'
 import baseReducer, { BaseState } from './slices/base'
 import localeReducer, { LocaleState } from './slices/locale/localeSlice'
 import themeReducer, { ThemeState } from './slices/theme/themeSlice'
@@ -18,6 +19,7 @@ export interface AsyncReducers {
 }
 
 const staticReducers = {
+    user: userReducer,
     auth: authReducer,
     base: baseReducer,
     locale: localeReducer,
