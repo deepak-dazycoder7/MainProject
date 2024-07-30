@@ -1,46 +1,44 @@
-import Avatar from '@/components/ui/Avatar'
-import Dropdown from '@/components/ui/Dropdown'
-import withHeaderItem from '@/utils/hoc/withHeaderItem'
-import authHook from '@/views/auth/auth.hook'
-import { Link } from 'react-router-dom'
-import classNames from 'classnames'
-import { HiOutlineLogout, HiOutlineUser } from 'react-icons/hi'
-import type { CommonProps } from '@/@types/common'
+import Avatar from '@/components/ui/Avatar';
+import Dropdown from '@/components/ui/Dropdown';
+import withHeaderItem from '@/utils/hoc/withHeaderItem';
 import { apiSignOut } from '../../views/auth/auth.service';
-import { clearAuth,  useAppDispatch } from '../../store';
+import { setAuth, clearAuth, useAppDispatch } from '../../store';
 import { setUser } from '@/views/user/user.slice';
+import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import classNames from 'classnames';
+import { HiOutlineLogout, HiOutlineUser } from 'react-icons/hi';
+import type { CommonProps } from '@/@types/common';
 
 type DropdownList = {
-    label: string
-    path: string
-    icon: JSX.Element
-}
+    label: string;
+    path: string;
+    icon: JSX.Element;
+};
 
-// const dispatch = useAppDispatch();
-
-// const handleSignOut = () => {
-//     dispatch(clearAuth());
-//     dispatch(
-//         setUser({
-//             avatar: '',
-//             userName: '',
-//             email: '',
-//             authority: [],
-//         })
-//     );
-//     navigate('/unauthenticated-entry');
-// };
-
-// const signOut = async () => {
-//     await apiSignOut();
-//     handleSignOut();
-// };
-
-const dropdownItemList: DropdownList[] = []
+const dropdownItemList: DropdownList[] = [];
 
 const _UserDropdown = ({ className }: CommonProps) => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
-    const { signOut } = authHook()
+    const handleSignOut = () => {
+        dispatch(clearAuth());
+        dispatch(
+            setUser({
+                avatar: '',
+                userName: '',
+                email: '',
+                authority: [],
+            })
+        );
+        navigate('/unauthenticated-entry');
+    };
+
+    const signOut = async () => {
+        await apiSignOut();
+        handleSignOut();
+    };
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>
@@ -50,7 +48,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
                 <div className="font-bold">User01</div>
             </div>
         </div>
-    )
+    );
 
     return (
         <div>
@@ -103,9 +101,9 @@ const _UserDropdown = ({ className }: CommonProps) => {
                 </Dropdown.Item>
             </Dropdown>
         </div>
-    )
-}
+    );
+};
 
-const UserDropdown = withHeaderItem(_UserDropdown)
+const UserDropdown = withHeaderItem(_UserDropdown);
 
-export default UserDropdown
+export default UserDropdown;
