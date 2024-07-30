@@ -1,13 +1,18 @@
-import { FormItem, FormContainer } from '@/components/ui/Form'
+import React from 'react'
+import { Field, Form, Formik } from 'formik'
+import * as Yup from 'yup'
 import Input from '@/components/ui/Input'
 import Button from '@/components/ui/Button'
 import Alert from '@/components/ui/Alert'
 import PasswordInput from '@/components/shared/PasswordInput'
 import ActionLink from '@/components/shared/ActionLink'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
-import { Field, Form, Formik } from 'formik'
-import * as Yup from 'yup'
-import useAuth from '@/utils/hooks/useAuth'
+import { FormItem, FormContainer } from '@/components/ui/Form'
+import { SignUpCredential } from '@/views/auth/auth.type';
+import { apiSignUp } from '@/views/auth/auth.service';
+import {  setAuth, useAppDispatch } from '@/store';
+import { setUser } from '@/views/user/user.slice';
+import authHook from '@/views/auth/auth.hook'; 
 import type { CommonProps } from '@/@types/common'
 
 interface SignUpFormProps extends CommonProps {
@@ -18,6 +23,7 @@ interface SignUpFormProps extends CommonProps {
 type SignUpFormSchema = {
     userName: string
     password: string
+    confirmPassword: string
     email: string
 }
 
@@ -33,12 +39,44 @@ const validationSchema = Yup.object().shape({
     ),
 })
 
-const SignUpForm = (props: SignUpFormProps) => {
+const SignUpForm: React.FC<SignUpFormProps> = (props) => {
     const { disableSubmit = false, className, signInUrl = '/sign-in' } = props
 
-    const { signUp } = useAuth()
-
     const [message, setMessage] = useTimeOutMessage()
+    const dispatch = useAppDispatch();
+    const { navigateToAuthenticatedEntry } = authHook();
+
+    const signUp = async (values: SignUpCredential) => {
+        try {
+            const resp = await apiSignUp(values);
+            if (resp.data) {
+                const { token } = resp.data;
+                dispatch(setAuth(token));
+                if (resp.data.user) {
+                    dispatch(
+                        setUser(
+                            resp.data.user || {
+                                avatar: '',
+                                userName: 'Anonymous',
+                                authority: ['USER'],
+                                email: '',
+                            }
+                        )
+                    );
+                }
+                navigateToAuthenticatedEntry();
+                return {
+                    status: 'success',
+                    message: '',
+                };
+            }
+        } catch (errors: any) {
+            return {
+                status: 'failed',
+                message: errors?.response?.data?.message || errors.toString(),
+            };
+        }
+    };
 
     const onSignUp = async (
         values: SignUpFormSchema,
@@ -64,10 +102,10 @@ const SignUpForm = (props: SignUpFormProps) => {
             )}
             <Formik
                 initialValues={{
-                    userName: 'admin1',
-                    password: '123Qwe1',
-                    confirmPassword: '123Qwe1',
-                    email: 'test@testmail.com',
+                    userName: '',
+                    password: '',
+                    confirmPassword: '',
+                    email: '',
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {

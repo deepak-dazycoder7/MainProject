@@ -4,14 +4,15 @@ import userReducer from '../views/user/user.slice'
 import baseReducer, { BaseState } from './slices/base'
 import localeReducer, { LocaleState } from './slices/locale/localeSlice'
 import themeReducer, { ThemeState } from './slices/theme/themeSlice'
-import RtkQueryService from '@/services/RtkQueryService'
+
 
 export type RootState = CombinedState<{
-    auth: ReturnType<typeof authReducer>
-    base: BaseState
-    locale: LocaleState
-    theme: ThemeState
-    [RtkQueryService.reducerPath]: ReturnType<typeof RtkQueryService.reducer>
+    user: ReturnType<typeof userReducer>,
+    auth: ReturnType<typeof authReducer>,
+    base: BaseState,
+    locale: LocaleState,
+    theme: ThemeState,
+
 }>
 
 export interface AsyncReducers {
@@ -24,7 +25,7 @@ const staticReducers = {
     base: baseReducer,
     locale: localeReducer,
     theme: themeReducer,
-    [RtkQueryService.reducerPath]: RtkQueryService.reducer,
+
 }
 
 const createRootReducer = (asyncReducers?: AsyncReducers): Reducer<RootState, AnyAction> => {

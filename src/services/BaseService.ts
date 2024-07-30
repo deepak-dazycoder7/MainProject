@@ -3,7 +3,7 @@ import appConfig from '@/configs/app.config'
 import { TOKEN_TYPE, REQUEST_HEADER_AUTH_KEY } from '@/constants/api.constant'
 import { PERSIST_STORE_NAME } from '@/constants/app.constant'
 import deepParseJson from '@/utils/deepParseJson'
-import store, { signOutSuccess } from '../store'
+import store, { clearAuth } from '../store'
 
 const unauthorizedCode = [401]
 
@@ -16,20 +16,20 @@ BaseService.interceptors.request.use(
     (config) => {
         const rawPersistData = localStorage.getItem(PERSIST_STORE_NAME)
         const persistData = deepParseJson(rawPersistData)
-        
+    
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        // let accessToken = (persistData as any).auth.token //replace session with scnd auth
+        let accessToken = (persistData as any).auth.token //replace session with scnd auth
 
         // if (!accessToken) {
         //     const { auth } = store.getState()
-        //     //accessToken = auth.session.token. //replace session with scnd auth
+        //     accessToken = auth.token. //replace session with scnd auth
         // }
 
-        // if (accessToken) {
-        //     config.headers[
-        //         REQUEST_HEADER_AUTH_KEY
-        //     ] = `${TOKEN_TYPE}${accessToken}`
-        // }
+        if (accessToken) {
+            config.headers[
+                REQUEST_HEADER_AUTH_KEY
+            ] = `${TOKEN_TYPE}${accessToken}`
+        }
 
         return config
     },
@@ -44,7 +44,7 @@ BaseService.interceptors.response.use(
         const { response } = error
 
         if (response && unauthorizedCode.includes(response.status)) {
-            store.dispatch(signOutSuccess())
+            store.dispatch(clearAuth())
         }
 
         return Promise.reject(error)

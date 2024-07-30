@@ -1,11 +1,14 @@
 import Avatar from '@/components/ui/Avatar'
 import Dropdown from '@/components/ui/Dropdown'
 import withHeaderItem from '@/utils/hoc/withHeaderItem'
-import useAuth from '@/utils/hooks/useAuth'
+import authHook from '@/views/auth/auth.hook'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { HiOutlineLogout, HiOutlineUser } from 'react-icons/hi'
 import type { CommonProps } from '@/@types/common'
+import { apiSignOut } from '../../views/auth/auth.service';
+import { clearAuth,  useAppDispatch } from '../../store';
+import { setUser } from '@/views/user/user.slice';
 
 type DropdownList = {
     label: string
@@ -13,11 +16,31 @@ type DropdownList = {
     icon: JSX.Element
 }
 
+// const dispatch = useAppDispatch();
+
+// const handleSignOut = () => {
+//     dispatch(clearAuth());
+//     dispatch(
+//         setUser({
+//             avatar: '',
+//             userName: '',
+//             email: '',
+//             authority: [],
+//         })
+//     );
+//     navigate('/unauthenticated-entry');
+// };
+
+// const signOut = async () => {
+//     await apiSignOut();
+//     handleSignOut();
+// };
+
 const dropdownItemList: DropdownList[] = []
 
 const _UserDropdown = ({ className }: CommonProps) => {
 
-    const { signOut } = useAuth()
+    const { signOut } = authHook()
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>

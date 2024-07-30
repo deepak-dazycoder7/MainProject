@@ -9,10 +9,12 @@ import Alert from '@/components/ui/Alert'
 import PasswordInput from '@/components/shared/PasswordInput'
 import ActionLink from '@/components/shared/ActionLink'
 import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
-import userApiService from '../../../services/ApiService'
-import type { AxiosRequestConfig } from 'axios'
 import type { CommonProps } from '@/@types/common'
-import useAuth from '@/utils/hooks/useAuth'
+import { SignInCredential } from '../auth.type';
+import { apiSignIn } from '../auth.service';
+import {  setAuth, useAppDispatch } from '@/store';
+import { setUser } from '@/views/user/user.slice';
+import authHook from '@/views/auth/auth.hook'; 
 
 interface SignInFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -43,7 +45,40 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
     } = props
 
     const [message, setMessage] = useTimeOutMessage()
-    const { signIn } = useAuth()
+    const dispatch = useAppDispatch();
+    const { navigateToAuthenticatedEntry } = authHook();
+
+    const signIn = async (values: SignInCredential) => {
+        try {
+            const resp = await apiSignIn(values);
+            if (resp.data) {
+                const { token } = resp.data;
+                dispatch(setAuth(token));
+                if (resp.data.user) {
+                    dispatch(
+                        setUser(
+                            resp.data.user || {
+                                avatar: '',
+                                userName: 'Anonymous',
+                                authority: ['USER'],
+                                email: '',
+                            }
+                        )
+                    );
+                }
+                navigateToAuthenticatedEntry();
+                return {
+                    status: 'success',
+                    message: '',
+                };
+            }
+        } catch (errors: any) {
+            return {
+                status: 'failed',
+                message: errors?.response?.data?.message || errors.toString(),
+            };
+        }
+    };
 
     const handleSignIn = async (
         values: SignInFormSchema,
@@ -52,31 +87,10 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
         const { email, password } = values
         setSubmitting(true)
 
-        const requestConfig: AxiosRequestConfig = {
-            method: 'POST',
-            url: '/sign-in',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: { email, password },
-        }
+        const result = await signIn({ email, password })
 
-        try {
-            const response = await userApiService.fetchData(requestConfig)
-            console.log('Response:', response.data)
-
-            // Use the response data with signIn method from useAuth
-            const authResult = await signIn({ email, password })
-
-            if (authResult?.status === 'failed') {
-                setMessage(authResult.message)
-            } else {
-                setMessage('Login successful')
-            }
-        } catch (error) {
-            console.error('Error:', error)
-            // Handle error here (e.g., show error message)
-            setMessage('Login failed. Please check your credentials.')
+        if (result?.status === 'failed') {
+            setMessage(result.message)
         }
 
         setSubmitting(false)

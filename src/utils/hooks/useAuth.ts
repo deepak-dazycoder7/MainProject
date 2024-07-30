@@ -7,7 +7,7 @@ import { SignInCredential, SignUpCredential } from '../../views/auth/auth.type';
 
 type Status = 'success' | 'failed';
 
-function useAuth() {
+function authHook() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const query = useQuery();

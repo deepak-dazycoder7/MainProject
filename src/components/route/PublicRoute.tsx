@@ -1,21 +1,13 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import appConfig from '@/configs/app.config'
-import useAuth from '@/utils/hooks/useAuth'
+import authHook from '@/views/auth/auth.hook'
 
 const { authenticatedEntryPath } = appConfig
 
 const PublicRoute = () => {
-    const { authenticated } = useAuth()
+    const { authenticated } = authHook()
 
     return authenticated ? <Navigate to={authenticatedEntryPath} /> : <Outlet />
 }
 
 export default PublicRoute
-
-// import { Outlet } from 'react-router-dom'
-
-// const PublicRoute = () => {
-//     return <Outlet />
-// }
-
-// export default PublicRoute
