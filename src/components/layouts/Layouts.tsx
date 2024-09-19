@@ -9,9 +9,9 @@ import {
     LAYOUT_TYPE_DECKED,
     LAYOUT_TYPE_BLANK,
 } from '@/constants/theme.constant'
-import authHook from '@/views/auth/auth.hook'
 import useDirection from '@/utils/hooks/useDirection'
 import useLocale from '@/utils/hooks/useLocale'
+import useAuth from '@/utils/hooks/useAuth'
 
 const layouts = {
     [LAYOUT_TYPE_CLASSIC]: lazy(() => import('./ClassicLayout')),
@@ -25,7 +25,7 @@ const layouts = {
 const Layout = () => {
     const layoutType = useAppSelector((state) => state.theme.layout.type)
 
-    const { authenticated } = authHook()
+    const { authenticated } = useAuth()
 
     useDirection()
 

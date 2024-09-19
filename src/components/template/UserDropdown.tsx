@@ -2,7 +2,8 @@ import Avatar from '@/components/ui/Avatar';
 import Dropdown from '@/components/ui/Dropdown';
 import withHeaderItem from '@/utils/hoc/withHeaderItem';
 import { apiSignOut } from '../../views/auth/auth.service';
-import { setAuth, clearAuth, useAppDispatch } from '../../store';
+import { useAppDispatch } from '../../store';
+import { clearAuth } from '@/views/auth/auth.slice'
 import { setUser } from '@/views/user/user.slice';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';

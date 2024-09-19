@@ -10,10 +10,11 @@ import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
 import { FormItem, FormContainer } from '@/components/ui/Form'
 import { SignUpCredential } from '@/views/auth/auth.type';
 import { apiSignUp } from '@/views/auth/auth.service';
-import {  setAuth, useAppDispatch } from '@/store';
+import { useAppDispatch } from '@/store';
+import { setAuth } from '../auth.slice'
 import { setUser } from '@/views/user/user.slice';
-import authHook from '@/views/auth/auth.hook'; 
 import type { CommonProps } from '@/@types/common'
+import useAuth from '@/utils/hooks/useAuth'
 
 interface SignUpFormProps extends CommonProps {
     disableSubmit?: boolean
@@ -44,7 +45,7 @@ const SignUpForm: React.FC<SignUpFormProps> = (props) => {
 
     const [message, setMessage] = useTimeOutMessage()
     const dispatch = useAppDispatch();
-    const { navigateToAuthenticatedEntry } = authHook();
+    const { navigateToAuthenticatedEntry } = useAuth();
 
     const signUp = async (values: SignUpCredential) => {
         try {

@@ -23,7 +23,7 @@ const userSlice = createSlice({
             state.email = action.payload?.email;
             state.userName = action.payload?.userName;
             state.authority = action.payload?.authority;
-        },
+        },  
     },
 });
 
