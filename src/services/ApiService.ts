@@ -5,10 +5,10 @@ const ApiService = {
     fetchData<Response = unknown, Request = Record<string, unknown>>(
         param: AxiosRequestConfig<Request>
     ) {
-        return new Promise<AxiosResponse<Response>>((resolve, reject) => {
+        return new Promise<Response>((resolve, reject) => {
             BaseService(param)
                 .then((response: AxiosResponse<Response>) => {
-                    resolve(response)
+                    resolve(response.data)
                 })
                 .catch((errors: AxiosError) => {
                     reject(errors)
@@ -18,3 +18,4 @@ const ApiService = {
 }
 
 export default ApiService
+

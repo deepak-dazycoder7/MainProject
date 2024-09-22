@@ -37,10 +37,10 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [
             {
-                key: 'collapseMenu.item1',
-                path: '/collapse-menu-item-view-1',
-                title: 'Collapse menu item 1',
-                translateKey: 'nav.collapseMenu.item1',
+                key: 'propertyCreate',
+                path: '/property-create',
+                title: 'Property Create',
+                translateKey: 'nav.propertyCreate',
                 icon: '',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: [],

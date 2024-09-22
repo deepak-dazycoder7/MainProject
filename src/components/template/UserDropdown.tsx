@@ -2,14 +2,15 @@ import Avatar from '@/components/ui/Avatar';
 import Dropdown from '@/components/ui/Dropdown';
 import withHeaderItem from '@/utils/hoc/withHeaderItem';
 import { apiSignOut } from '../../views/auth/auth.service';
-import { useAppDispatch } from '../../store';
+import { useAppDispatch, useAppSelector } from '../../store';
 import { clearAuth } from '@/views/auth/auth.slice'
-import { setUser } from '@/views/user/user.slice';
+import { setUser, clearUser } from '@/views/user/user.slice';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import { HiOutlineLogout, HiOutlineUser } from 'react-icons/hi';
 import type { CommonProps } from '@/@types/common';
+
 
 type DropdownList = {
     label: string;
@@ -25,28 +26,30 @@ const _UserDropdown = ({ className }: CommonProps) => {
 
     const handleSignOut = () => {
         dispatch(clearAuth());
-        dispatch(
-            setUser({
-                avatar: '',
-                userName: '',
-                email: '',
-                authority: [],
-            })
-        );
+        dispatch(clearUser()); 
+    
+        localStorage.removeItem('authToken');
         navigate('/unauthenticated-entry');
     };
 
+    const user = useAppSelector(state => state.user); // Get user state
+
     const signOut = async () => {
-        await apiSignOut();
-        handleSignOut();
+        try {
+            await apiSignOut();
+            handleSignOut();
+        } catch (error) {
+            console.error("Sign out failed", error);
+            // Optionally show an error message to the user
+        }
     };
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>
             <Avatar size={32} shape="circle" icon={<HiOutlineUser />} />
             <div className="hidden md:block">
-                <div className="text-xs capitalize">admin</div>
-                <div className="font-bold">User01</div>
+                <div className="text-xs capitalize">{user.role}</div>
+                <div className="font-bold">{user.firstName}</div>
             </div>
         </div>
     );
@@ -63,9 +66,9 @@ const _UserDropdown = ({ className }: CommonProps) => {
                         <Avatar shape="circle" icon={<HiOutlineUser />} />
                         <div>
                             <div className="font-bold text-gray-900 dark:text-gray-100">
-                                User01
+                                {user.firstName}
                             </div>
-                            <div className="text-xs">user01@mail.com</div>
+                            <div className="text-xs">{user.email}</div>
                         </div>
                     </div>
                 </Dropdown.Item>

@@ -1,8 +1,7 @@
 import { lazy } from 'react'
-import userAuthRoute from '../auth/auth.route'
 import type { Routes } from '@/@types/routes'
 
-export const userProtectRoutes = [
+export const userRoutes : Routes = [
     {
         key: 'userProfile',
         path: '/user-profile',
@@ -54,3 +53,4 @@ export const userProtectRoutes = [
     },
     
 ]
+export default userRoutes;

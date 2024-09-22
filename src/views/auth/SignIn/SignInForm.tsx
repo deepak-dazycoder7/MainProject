@@ -1,32 +1,33 @@
-import React from 'react'
-import { Field, Form, Formik } from 'formik'
-import * as Yup from 'yup'
-import Input from '@/components/ui/Input'
-import Button from '@/components/ui/Button'
-import Checkbox from '@/components/ui/Checkbox'
-import { FormItem, FormContainer } from '@/components/ui/Form'
-import Alert from '@/components/ui/Alert'
-import PasswordInput from '@/components/shared/PasswordInput'
-import ActionLink from '@/components/shared/ActionLink'
-import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage'
-import type { CommonProps } from '@/@types/common'
+import React from 'react';
+import { Field, Form, Formik } from 'formik';
+import * as Yup from 'yup';
+import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
+import Checkbox from '@/components/ui/Checkbox';
+import { FormItem, FormContainer } from '@/components/ui/Form';
+import Alert from '@/components/ui/Alert';
+import PasswordInput from '@/components/shared/PasswordInput';
+import ActionLink from '@/components/shared/ActionLink';
+import useTimeOutMessage from '@/utils/hooks/useTimeOutMessage';
+import type { CommonProps } from '@/@types/common';
 import { SignInCredential } from '../auth.type';
 import { apiSignIn } from '../auth.service';
 import { useAppDispatch } from '@/store';
-import { setAuth } from '../auth.slice'
-import useAuth from '@/utils/hooks/useAuth'
+import { setAuth } from '../auth.slice';
+import useAuth from '@/utils/hooks/useAuth';
+import { setUser } from '@/views/user/user.slice';
 
 interface SignInFormProps extends CommonProps {
-    disableSubmit?: boolean
-    forgotPasswordUrl?: string
-    signUpUrl?: string
+    disableSubmit?: boolean;
+    forgotPasswordUrl?: string;
+    signUpUrl?: string;
 }
 
 type SignInFormSchema = {
-    email: string
-    password: string
-    rememberMe: boolean
-}
+    email: string;
+    password: string;
+    rememberMe: boolean;
+};
 
 const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -34,7 +35,7 @@ const validationSchema = Yup.object().shape({
         .required('Please enter your email'),
     password: Yup.string().required('Please enter your password'),
     rememberMe: Yup.bool(),
-})
+});
 
 const SignInForm: React.FC<SignInFormProps> = (props) => {
     const {
@@ -42,32 +43,35 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
         className,
         forgotPasswordUrl = '/forgot-password',
         signUpUrl = '/sign-up',
-    } = props
+    } = props;
 
-    const [message, setMessage] = useTimeOutMessage()
+    const [message, setMessage] = useTimeOutMessage();
     const dispatch = useAppDispatch();
     const { navigateToAuthenticatedEntry } = useAuth();
-
-    
 
     const signIn = async (values: SignInCredential) => {
         try {
             const resp = await apiSignIn(values);
-            if (resp.data) {
-                const { token } = resp.data;
-                console.log(token)
+            if (resp) {
+                const { token, user } = resp.data;
                 dispatch(setAuth(token));
+                dispatch(setUser({ user }));
+
+                // Set success message
+                setMessage(resp.message);
 
                 navigateToAuthenticatedEntry();
                 return {
-                    status: 'success',
-                    message: '',
+                    status: resp.status,
+                    message: resp.message,
                 };
             }
         } catch (errors: any) {
+            const errorMessage = errors?.response?.data?.message || errors.toString();
+            setMessage(errorMessage);
             return {
-                status: 'failed',
-                message: errors?.response?.data?.message || errors.toString(),
+                status: errors?.response?.status,
+                message: errorMessage,
             };
         }
     };
@@ -76,22 +80,26 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
         values: SignInFormSchema,
         setSubmitting: (isSubmitting: boolean) => void,
     ) => {
-        const { email, password } = values
-        setSubmitting(true)
+        const { email, password } = values;
+        setSubmitting(true);
 
-        const result = await signIn({ email, password })
+        const result = await signIn({ email, password });
 
-        if (result?.status === 'failed') {
-            setMessage(result.message)
+        if (result) {
+            setMessage(result.message);
         }
 
-        setSubmitting(false)
-    }
+        setSubmitting(false);
+    };
 
     return (
         <div className={className}>
             {message && (
-                <Alert showIcon className="mb-4" type="danger">
+                <Alert
+                    showIcon
+                    className="mb-4"
+                    type={message.startsWith('Sign-in successful!') ? 'success' : 'danger'}
+                >
                     {message}
                 </Alert>
             )}
@@ -104,9 +112,9 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
                 validationSchema={validationSchema}
                 onSubmit={(values, { setSubmitting }) => {
                     if (!disableSubmit) {
-                        handleSignIn(values, setSubmitting)
+                        handleSignIn(values, setSubmitting);
                     } else {
-                        setSubmitting(false)
+                        setSubmitting(false);
                     }
                 }}
             >
@@ -128,9 +136,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
                             </FormItem>
                             <FormItem
                                 label="Password"
-                                invalid={Boolean(
-                                    errors.password && touched.password,
-                                )}
+                                invalid={Boolean(errors.password && touched.password)}
                                 errorMessage={errors.password}
                             >
                                 <Field
@@ -161,7 +167,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
                                 {isSubmitting ? 'Signing in...' : 'Sign In'}
                             </Button>
                             <div className="mt-4 text-center">
-                                <span>{`Don't have an account yet?`} </span>
+                                <span>{`Don't have an account yet? `}</span>
                                 <ActionLink to={signUpUrl}>Sign up</ActionLink>
                             </div>
                         </FormContainer>
@@ -169,7 +175,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
                 )}
             </Formik>
         </div>
-    )
-}
+    );
+};
 
-export default SignInForm
+export default SignInForm;

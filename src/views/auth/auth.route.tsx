@@ -1,7 +1,7 @@
 import { lazy } from 'react'
 import type { Routes } from '@/@types/routes'
 
-export const userAuthRoute: Routes = [
+export const AuthRoute: Routes = [
     {
         key: 'signIn',
         path: `/sign-in`,
@@ -28,4 +28,4 @@ export const userAuthRoute: Routes = [
     },
 ]
 
-export default userAuthRoute
+export default AuthRoute
