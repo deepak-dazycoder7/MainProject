@@ -32,7 +32,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
         navigate('/unauthenticated-entry');
     };
 
-    const user = useAppSelector(state => state.user); // Get user state
+    const user = useAppSelector(state => state.user); 
 
     const signOut = async () => {
         try {
@@ -40,7 +40,6 @@ const _UserDropdown = ({ className }: CommonProps) => {
             handleSignOut();
         } catch (error) {
             console.error("Sign out failed", error);
-            // Optionally show an error message to the user
         }
     };
 

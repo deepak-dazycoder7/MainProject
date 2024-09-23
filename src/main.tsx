@@ -1,6 +1,7 @@
 /* eslint-disable import/default */
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import 'flowbite';
 import App from './App'
 import './index.css'
 

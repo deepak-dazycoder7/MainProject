@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 /** @type {import('tailwindcss').Config} */
 const safeListFile = 'safelist.txt'
+const flowbite = require("flowbite-react/tailwind");
+
 
 // colors.indigo
 const SAFELIST_COLORS = 'colors'
@@ -10,7 +12,9 @@ module.exports = {
 	content:  [
 		"./index.html",
     	"./src/**/*.{js,ts,jsx,tsx}", 
-		'./safelist.txt'
+		'./safelist.txt',
+		'./node_modules/flowbite/**/*.js', 
+		flowbite.content(),
 	],
 	darkMode: 'class',
 		theme: {
@@ -102,5 +106,6 @@ module.exports = {
             ],
         }),
         require('@tailwindcss/typography'),
-	],
+		flowbite.plugin(),
+		],
 };

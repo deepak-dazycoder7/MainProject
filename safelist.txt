@@ -4256,6 +4256,7 @@ h-dvh
 h-min
 h-max
 h-fit
+h-modal
 w-0
 w-1
 w-2
