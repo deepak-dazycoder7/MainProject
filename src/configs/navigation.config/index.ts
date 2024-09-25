@@ -37,10 +37,10 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [
             {
-                key: 'propertyCreate',
-                path: '/property-create',
-                title: 'Property Create',
-                translateKey: 'nav.propertyCreate',
+                key: 'property.propertyNew',
+                path: '/property/property-new',
+                title: 'Property Create New',
+                translateKey: 'nav.collapseMenu.property.propertyNew',
                 icon: '',
                 type: NAV_ITEM_TYPE_ITEM,
                 authority: [],
