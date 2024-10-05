@@ -56,6 +56,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
                 const { token, user } = resp.data;
                 dispatch(setAuth(token));
                 dispatch(setUser({ user }));
+                localStorage.setItem('token', token);
 
                 // Set success message
                 setMessage(resp.message);

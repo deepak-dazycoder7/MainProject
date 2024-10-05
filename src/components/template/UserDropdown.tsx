@@ -28,7 +28,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
         dispatch(clearAuth());
         dispatch(clearUser()); 
     
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('token');
         navigate('/unauthenticated-entry');
     };
 

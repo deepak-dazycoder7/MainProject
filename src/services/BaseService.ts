@@ -24,7 +24,6 @@ BaseService.interceptors.request.use(
             const { auth } = store.getState()
             accessToken = auth.token
         }
-
         if (accessToken) {
             config.headers[
                 REQUEST_HEADER_AUTH_KEY

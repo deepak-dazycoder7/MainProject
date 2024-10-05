@@ -5,8 +5,8 @@ import Select from '@/components/ui/Select'
 import CreatableSelect from 'react-select/creatable'
 import { Field, FormikErrors, FormikTouched, FieldProps } from 'formik'
 import { useState, useEffect } from 'react'
-import { apiCreateDivision } from '../property.service'
-import axios from 'axios'
+import { apiGetAllProperty } from '../property.service'
+import AsyncSelect from 'react-select/async'
 
 type Options = {
     label: string
@@ -30,63 +30,51 @@ type OrganizationFieldsProps = {
     }
 }
 
-const categories = [
-    { label: 'Bags', value: 'bags' },
-    { label: 'Cloths', value: 'cloths' },
-    { label: 'Devices', value: 'devices' },
-    { label: 'Shoes', value: 'shoes' },
-    { label: 'Watches', value: 'watches' },
-]
-
 const tags = [
     { label: 'trend', value: 'trend' },
     { label: 'unisex', value: 'unisex' },
 ]
 
+interface DivisionResponse {
+    message: string;
+    status: number;
+    data: Division[];
+    error: string | null;
+}
 
-type PropertyDivision = {
+interface Division {
     id: number;
     division_name: string;
-    propertyId: number;
-  }
+    status: boolean;
+    description: string;
+    created_by: number;
+    deleted_by: number | null;
+}
 
-  
 const OrganizationFields = (props: OrganizationFieldsProps) => {
     const { values = { category: '', tags: [] }, touched, errors } = props
-    const [divisions, setDivisions] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedOptions, setSelectedOptions] = useState<Options[]>([]);
 
-    // useEffect(() => {
-    //     const fetchData = async (values: PropertyDivision) => {
-    //         setIsLoading(true);
-    //         try {
-    //             const divisionsResponse = await apiCreateDivision(values);
-    //             setDivisions(divisionsResponse.data); // 'divisionsResponse' now has a type with 'data'
-    //             console.log(divisionsResponse)
-    //         } catch (error) {
-    //             console.error('Error fetching divisions:', error);
-    //         } finally {
-    //             setIsLoading(false);
-    //         }
-    //     };
-    
-    //     fetchData();
-    // }, [values]);
-    
+    const [divisions, setDivisions] = useState<Division[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    console.log(divisions)
     useEffect(() => {
-        const fetchData = async (): Promise<void> => {
+        const fetchDivision = async () => {
             try {
-                const response = await axios.get('/users');
-                console.log('console fetchdata division', response?.data?.data); // Access data from the response
+                const response = await apiGetAllProperty<DivisionResponse, Record>({});
+
+                // console.log(response)
+                setDivisions(response.data);
+                setIsLoading(false);
+                setError(null);
             } catch (error) {
-                console.error('Error fetching data:', error); // Handle errors
+                setIsLoading(false);
             }
         };
-    
-        fetchData();
+
+        fetchDivision();
     }, []);
-    
+
     return (
         <AdaptableCard divider isLastChild className="mb-4">
             <h5>Organizations For Category, Types ,Divisions of Property</h5>
@@ -107,7 +95,10 @@ const OrganizationFields = (props: OrganizationFieldsProps) => {
                                     componentAs={CreatableSelect}
                                     field={field}
                                     form={form}
-                                    options={categories}
+                                    options={divisions.map(division => ({
+                                        label: division.division_name,
+                                        value: division.id
+                                    }))}
                                     value={values.categories}
                                     onChange={(option) =>
                                         form.setFieldValue(

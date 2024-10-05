@@ -45,8 +45,16 @@ export async function apiPutSalesProduct<T, U extends Record<string, unknown>>(d
 //Division Api Service
 export async function apiCreateDivision<T, U extends Record<string, unknown>>(data: U) {
     return ApiService.fetchData<T>({
-        url: '/property/division/create',
+        url: '/property/division',
         method: 'post',
+        data,
+    })
+}
+
+export async function apiGetAllProperty<T, U extends Record<string, unknown>>(data: U) {
+    return ApiService.fetchData<T>({
+        url: '/property/division',
+        method: 'get',
         data,
     })
 }
